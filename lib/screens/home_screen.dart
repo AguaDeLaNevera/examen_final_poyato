@@ -3,14 +3,8 @@ import 'package:plantilla_login_register/models/product.dart';
 import 'package:plantilla_login_register/providers/provider.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Information info = Provider.of<Information>(context);
