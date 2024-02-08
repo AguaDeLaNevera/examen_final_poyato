@@ -1,150 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:plantilla_login_register/models/product.dart';
-import 'package:plantilla_login_register/providers/provider.dart';
+import 'package:plantilla_login_register/models/user.dart';
+import 'package:plantilla_login_register/providers/information.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Information info = Provider.of<Information>(context);
-    List<Product> productes = info.llistaProductes;
-    List<int> llistaCart = info.llistaCart;
-    int sumaTotal = info.sumaTotal;
-    final missatge = ModalRoute.of(context)!.settings.arguments as String;
+    List<User> userList = info.userList;
+
+    Future<void> _refreshUserList() async {
+      // Clear the user list
+      info.clearUserList();
+
+      // Fetch new user data
+      await info.getUsers();
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inici'),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              Navigator.of(context).pushReplacementNamed('logOrReg');
-            },
-          ),
-        ],
+        title: Text('User List'),
       ),
-      body: ListView.builder(
-        itemCount: productes.length,
-        itemBuilder: (context, index) {
-          return Row(
-            children: [
-              buildProductColumn(productes[index], llistaCart, index, info),
-              SizedBox(width: 80),
-              buildCartColumn(productes[index], llistaCart, index, sumaTotal),
-            ],
-          );
+      body: RefreshIndicator(
+        onRefresh: _refreshUserList,
+        child: userList.isEmpty
+            ? Center(
+                child: Text('No users available'),
+              )
+            : ListView.builder(
+                itemCount: userList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(userList[index].name),
+                    subtitle: Text(userList[index].email),
+                    onTap: () {
+                      // Navigate to user details screen
+                      Navigator.pushNamed(
+                        context,
+                        'userDetails',
+                        arguments: userList[index],
+                      );
+                    },
+                    onLongPress: () {
+                      // Show a dialog to confirm user deletion
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Delete User'),
+                            content: Text(
+                                'Are you sure you want to delete this user?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Delete the user
+                                  info.deleteUser(userList[index]);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Delete'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to the screen to create a new user
+          Navigator.pushNamed(context, 'createUser');
         },
+        child: Icon(Icons.add),
       ),
-    );
-  }
-
-  Widget buildProductColumn(
-      Product product, List<int> productList, int index, Information info) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0),
-          child: Image.network(
-            product.image,
-            width: 80,
-            height: 80,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 46.0),
-          child: Text('${product.price}€'),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    info.suma(index, product.price);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.all(4),
-                  ),
-                  child: Icon(Icons.add, size: 12),
-                ),
-                SizedBox(height: 4),
-              ],
-            ),
-            SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    info.resta(index, product.price);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.all(4),
-                  ),
-                  child: Icon(Icons.remove, size: 12),
-                ),
-                SizedBox(height: 4),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget buildCartColumn(
-      Product product, List<int> productList, int index, int sumaTotal) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0),
-          child: Image.network(
-            product.image,
-            width: 80,
-            height: 80,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 46.0),
-          child: Text('${product.price}€'),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Display the partial sum for each product.
-                Text('Partial Sum: ${productList[index]}€'),
-              ],
-            ),
-            SizedBox(width: 8),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Display the total sum.
-                Text('Total: ${sumaTotal}€'),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-      ],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:plantilla_login_register/models/product.dart';
-import 'package:plantilla_login_register/providers/provider.dart';
+import 'package:plantilla_login_register/models/user.dart';
+import 'package:plantilla_login_register/providers/information.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginOrRegisterScreen extends StatefulWidget {
   @override
@@ -12,6 +13,10 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
   late AnimationController controller;
   late Animation<double> animation;
   GlobalKey<FormState> _key = GlobalKey();
+
+  // Declare controllers for email and password
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   bool isLogin = false;
   bool isRegister = false;
@@ -27,28 +32,34 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
 
   bool _isLoading = false;
 
-  initState() {
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
     super.initState();
+    initPrefs();
     controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
-
-    //Descomentar las siguientes lineas para generar un efecto de "respiracion"
-    /*animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.forward();
-      }
-    });*/
     controller.forward();
+  }
+
+  Future<void> initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    _correu = _prefs.getString('email') ?? '';
+    _passwd = _prefs.getString('password') ?? '';
+    _isChecked = _prefs.getBool('remember') ?? false;
+    if (_isChecked) {
+      // If remember is checked, pre-fill the text fields
+      nameController.text = _correu ?? '';
+      emailController.text = _passwd ?? '';
+    }
   }
 
   @override
   dispose() {
-    // Es important SEMPRE realitzar el dispose del controller.
     controller.dispose();
     super.dispose();
   }
@@ -195,7 +206,17 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
       setState(() {
         _isLoading = true;
       });
-      // Aquí es realitzaria la petició de login a l'API o similar
+
+      if (_isChecked) {
+        _prefs.setString('email', _correu!);
+        _prefs.setString('password', _passwd!);
+        _prefs.setBool('remember', true);
+      } else {
+        _prefs.remove('email');
+        _prefs.remove('password');
+        _prefs.setBool('remember', false);
+      }
+
       missatge = 'Gràcies \n $_correu \n $_passwd';
       setState(() {
         _isLoading = false;
@@ -206,7 +227,6 @@ class _LoginOrRegisterScreenState extends State<LoginOrRegisterScreen>
 }
 
 class AnimatedLogo extends AnimatedWidget {
-  // Maneja los Tween estáticos debido a que estos no cambian.
   static final _opacityTween = Tween<double>(begin: 0.1, end: 1.0);
   static final _sizeTween = Tween<double>(begin: 0.0, end: 100.0);
 
@@ -219,8 +239,8 @@ class AnimatedLogo extends AnimatedWidget {
       opacity: _opacityTween.evaluate(animation),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10.0),
-        height: _sizeTween.evaluate(animation), // Aumenta la altura
-        width: _sizeTween.evaluate(animation), // Aumenta el ancho
+        height: _sizeTween.evaluate(animation),
+        width: _sizeTween.evaluate(animation),
         child: FlutterLogo(),
       ),
     );
