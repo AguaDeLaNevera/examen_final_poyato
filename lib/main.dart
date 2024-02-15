@@ -7,7 +7,7 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => Information(),
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: 'logOrReg',
+      initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
         'logOrReg': (context) => LoginOrRegisterScreen(),

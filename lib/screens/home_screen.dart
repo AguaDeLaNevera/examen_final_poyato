@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plantilla_login_register/models/user.dart';
+import 'package:plantilla_login_register/models/tree.dart'; // Import the Tree class
 import 'package:plantilla_login_register/providers/information.dart';
 import 'package:provider/provider.dart';
 
@@ -9,49 +9,49 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Information info = Provider.of<Information>(context);
-    List<User> userList = info.userList;
+    List<Tree> treeList = info.treeList; // Use treeList instead of userList
 
-    Future<void> _refreshUserList() async {
-      // Clear the user list
-      info.clearUserList();
+    Future<void> _refreshTreeList() async {
+      // Clear the tree list
+      info.clearTreeList();
 
-      // Fetch new user data
-      await info.getUsers();
+      // Fetch new tree data
+      await info.getTrees();
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('Tree List'), // Update the title
       ),
       body: RefreshIndicator(
-        onRefresh: _refreshUserList,
-        child: userList.isEmpty
+        onRefresh: _refreshTreeList,
+        child: treeList.isEmpty
             ? Center(
-                child: Text('No users available'),
+                child: Text('No trees available'), // Update the message
               )
             : ListView.builder(
-                itemCount: userList.length,
+                itemCount: treeList.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(userList[index].name),
-                    subtitle: Text(userList[index].email),
+                    title: Text(treeList[index].nom), // Update property access
+                    subtitle: Text(treeList[index].varietat),
                     onTap: () {
-                      // Navigate to user details screen
+                      // Navigate to tree details screen
                       Navigator.pushNamed(
                         context,
-                        'userDetails',
-                        arguments: userList[index],
+                        'treeDetails', // Assuming you have a route named 'treeDetails'
+                        arguments: treeList[index],
                       );
                     },
                     onLongPress: () {
-                      // Show a dialog to confirm user deletion
+                      // Show a dialog to confirm tree deletion
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Delete User'),
+                            title: Text('Delete Tree'),
                             content: Text(
-                                'Are you sure you want to delete this user?'),
+                                'Are you sure you want to delete this tree?'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
@@ -61,8 +61,8 @@ class HomeScreen extends StatelessWidget {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  // Delete the user
-                                  info.deleteUser(userList[index]);
+                                  // Delete the tree
+                                  info.deleteTree(treeList[index]);
                                   Navigator.of(context).pop();
                                 },
                                 child: Text('Delete'),
@@ -78,8 +78,9 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to the screen to create a new user
-          Navigator.pushNamed(context, 'createUser');
+          // Navigate to the screen to create a new tree
+          Navigator.pushNamed(context,
+              'createTree'); // Assuming you have a route named 'createTree'
         },
         child: Icon(Icons.add),
       ),

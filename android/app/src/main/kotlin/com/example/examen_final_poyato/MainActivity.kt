@@ -1,4 +1,4 @@
-package com.example.plantilla_login_register
+package com.example.examen_final_poyato
 
 import io.flutter.embedding.android.FlutterActivity
 
