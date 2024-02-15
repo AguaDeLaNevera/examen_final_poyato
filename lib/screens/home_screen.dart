@@ -76,13 +76,26 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to the screen to create a new tree
-          Navigator.pushNamed(context,
-              'createTree'); // Assuming you have a route named 'createTree'
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              // Navigate to the screen to create a new tree
+              Navigator.pushNamed(context,
+                  'createTree'); // Assuming you have a route named 'createTree'
+            },
+            child: Icon(Icons.add),
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: () {
+              // Navigate to IP Geolocation screen
+              Navigator.pushNamed(context, 'ipGeolocation');
+            },
+            child: Icon(Icons.location_on),
+          ),
+        ],
       ),
     );
   }

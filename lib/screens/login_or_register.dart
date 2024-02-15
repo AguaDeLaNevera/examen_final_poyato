@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plantilla_login_register/models/user.dart';
 import 'package:plantilla_login_register/providers/information.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

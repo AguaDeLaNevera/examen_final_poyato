@@ -27,8 +27,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomeScreen(),
         'logOrReg': (context) => LoginOrRegisterScreen(),
-        'createUser': (context) => CreateUserScreen(),
-        'userDetails': (context) => UserDetailsScreen(),
+        'createTree': (context) => CreateTreeScreen(),
+        'treeDetails': (context) => TreeDetailsScreen(),
+        'ipGeolocation': (context) =>
+            IPGeolocationScreen(), // Add the route for IP Geolocation screen
       },
     );
   }
