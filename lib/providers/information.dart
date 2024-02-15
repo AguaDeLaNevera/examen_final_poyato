@@ -10,33 +10,38 @@ class Information extends ChangeNotifier {
   List<Tree> treeList = [];
 
   Information() {
+    // Constructor to initialize the Information class
     print('Information initialized!');
-    getTrees();
+    getTrees(); // Fetch tree data upon initialization
   }
 
   Future<void> getTrees() async {
+    // Method to fetch tree data from the API
     var url = Uri.parse('$_baseUrl/arbres.json');
     final result = await http.get(url);
 
     if (result.statusCode == 200) {
+      // If the HTTP request is successful (status code 200)
       var jsonResponse = convert.jsonDecode(result.body);
       if (jsonResponse is Map<String, dynamic>) {
         jsonResponse.forEach((key, treeData) {
+          // Convert JSON data to Tree objects and add them to the list
           Tree tree = Tree.fromMap(treeData);
           treeList.add(tree);
         });
 
-        notifyListeners();
+        notifyListeners(); // Notify listeners about the change in data
       }
     } else {
-      // Handle error
+      // Handle error if the HTTP request fails
       print('Failed to load trees. Status code: ${result.statusCode}');
     }
 
-    print(treeList);
+    print(treeList); // Print the list of trees for debugging
   }
 
   Future<void> deleteTree(Tree tree) async {
+    // Method to delete a tree from the API
     var url = Uri.parse('$_baseUrl/arbres.json');
     final result = await http.get(url);
 
@@ -52,10 +57,11 @@ class Information extends ChangeNotifier {
             final deleteResult = await http.delete(deleteUrl);
 
             if (deleteResult.statusCode == 200) {
+              // If deletion is successful, remove the tree from the list
               treeList.remove(tree);
               notifyListeners();
             } else {
-              // Handle error
+              // Handle error if tree deletion fails
               print(
                   'Failed to delete tree. Status code: ${deleteResult.statusCode}');
             }
@@ -65,13 +71,14 @@ class Information extends ChangeNotifier {
         }
       }
     } else {
-      // Handle error
+      // Handle error if the HTTP request fails
       print('Failed to load trees. Status code: ${result.statusCode}');
     }
   }
 
   Future<void> createTree(String nom, String varietat, String tipus,
       bool autocton, String foto, String detall) async {
+    // Method to create a new tree and add it to the API
     var url = Uri.parse('$_baseUrl/arbres.json');
     final result = await http.post(
       url,
@@ -86,7 +93,7 @@ class Information extends ChangeNotifier {
     );
 
     if (result.statusCode == 200) {
-      // Retrieve the newly created tree from the response
+      // If creation is successful, retrieve the newly created tree from the response
       var jsonResponse = convert.jsonDecode(result.body);
       Tree newTree = Tree.fromMap(jsonResponse);
 
@@ -94,12 +101,13 @@ class Information extends ChangeNotifier {
       treeList.add(newTree);
       notifyListeners();
     } else {
-      // Handle error
+      // Handle error if tree creation fails
       print('Failed to create tree. Status code: ${result.statusCode}');
     }
   }
 
   void clearTreeList() {
+    // Method to clear the list of trees
     treeList.clear();
     notifyListeners();
   }

@@ -3,12 +3,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:plantilla_login_register/models/tree.dart';
 
 class TreeDetailsScreen extends StatelessWidget {
-  // Function to launch URL
+  // Funció per llançar una URL
   void launchURL(BuildContext context, String url) async {
     try {
       await launch(url);
     } catch (e) {
-      // Handle error, e.g., open a default detall screen
+      // Gestionar l'error, per exemple, obrir una pantalla de detall per defecte
       Navigator.pushNamed(context, 'detall', arguments: {
         'treeDetall': url,
       });
@@ -17,26 +17,26 @@ class TreeDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve the tree data from the arguments
+    // Recuperar les dades de l'arbre dels arguments
     final tree = ModalRoute.of(context)!.settings.arguments as Tree;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tree Details'),
+        title: Text('Detalls de larbre'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name: ${tree.nom}'),
-            Text('Variety: ${tree.varietat}'),
-            Text('Type: ${tree.tipus}'),
-            Text('Autocton: ${tree.autocton ? 'Yes' : 'No'}'),
+            Text('Nom: ${tree.nom}'),
+            Text('Varietat: ${tree.varietat}'),
+            Text('Tipus: ${tree.tipus}'),
+            Text('Autòcton: ${tree.autocton ? 'Sí' : 'No'}'),
             SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                // Launch URL when image is clicked
+                // Llançar la URL quan s'ha clicat sobre la imatge
                 launchURL(context, tree.detall);
               },
               child: Image.network(
@@ -49,7 +49,7 @@ class TreeDetailsScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to a detall screen when the button is clicked
+                // Navegar a una pantalla de detall quan es fa clic al botó
                 launchURL(context, tree.detall);
               },
               child: Text('Detall'),

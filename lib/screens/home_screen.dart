@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plantilla_login_register/models/tree.dart'; // Import the Tree class
+import 'package:plantilla_login_register/models/tree.dart'; // Importa la classe Tree
 import 'package:plantilla_login_register/providers/information.dart';
 import 'package:provider/provider.dart';
 
@@ -8,64 +8,70 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenir una instància del proveïdor d'informació
     Information info = Provider.of<Information>(context);
-    List<Tree> treeList = info.treeList; // Use treeList instead of userList
 
+    // Obté la llista d'arbres des del proveïdor (informació)
+    List<Tree> treeList = info.treeList;
+
+    // Funció per refrescar la llista d'arbres
     Future<void> _refreshTreeList() async {
-      // Clear the tree list
+      // Esborrar la llista d'arbres existent
       info.clearTreeList();
 
-      // Fetch new tree data
+      // Obtindre noves dades d'arbres
       await info.getTrees();
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tree List'), // Update the title
+        title: Text('Llista darbres'), // Actualitza el títol de la pantalla
       ),
       body: RefreshIndicator(
         onRefresh: _refreshTreeList,
         child: treeList.isEmpty
             ? Center(
-                child: Text('No trees available'), // Update the message
+                child: Text(
+                    'No hi ha arbres disponibles'), // Actualitza el missatge
               )
             : ListView.builder(
                 itemCount: treeList.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(treeList[index].nom), // Update property access
+                    title: Text(treeList[index]
+                        .nom), // Actualitza l'accés a les propietats
                     subtitle: Text(treeList[index].varietat),
                     onTap: () {
-                      // Navigate to tree details screen
+                      // Navegar a la pantalla de detalls de l'arbre
                       Navigator.pushNamed(
                         context,
-                        'treeDetails', // Assuming you have a route named 'treeDetails'
+                        'treeDetails', // Suposant que tens una ruta anomenada 'treeDetails'
                         arguments: treeList[index],
                       );
                     },
                     onLongPress: () {
-                      // Show a dialog to confirm tree deletion
+                      // Mostrar un diàleg per confirmar la eliminació de l'arbre
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Delete Tree'),
-                            content: Text(
-                                'Are you sure you want to delete this tree?'),
+                            title: Text('Eliminar arbre'),
+                            content:
+                                Text('Segur que vols eliminar aquest arbre?'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Cancel'),
+                                child: Text('Cancel·lar'),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  // Delete the tree
+                                  // Eliminar l'arbre
                                   info.deleteTree(treeList[index]);
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Delete'),
+                                child: Text('Eliminar'),
                               ),
                             ],
                           );
@@ -81,16 +87,16 @@ class HomeScreen extends StatelessWidget {
         children: [
           FloatingActionButton(
             onPressed: () {
-              // Navigate to the screen to create a new tree
+              // Navegar a la pantalla per crear un nou arbre
               Navigator.pushNamed(context,
-                  'createTree'); // Assuming you have a route named 'createTree'
+                  'createTree'); // Suposant que tens una ruta anomenada 'createTree'
             },
             child: Icon(Icons.add),
           ),
           SizedBox(height: 16),
           FloatingActionButton(
             onPressed: () {
-              // Navigate to IP Geolocation screen
+              // Navegar a la pantalla de geolocalització d'IP
               Navigator.pushNamed(context, 'ipGeolocation');
             },
             child: Icon(Icons.location_on),

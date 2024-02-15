@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: 'logOrReg',
       routes: {
         '/': (context) => const HomeScreen(),
         'logOrReg': (context) => LoginOrRegisterScreen(),
